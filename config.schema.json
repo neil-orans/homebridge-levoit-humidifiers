@@ -23,12 +23,6 @@
         "required": true,
         "description": "VeSync's account password"
       },
-      "password": {
-        "title": "Password",
-        "type": "string",
-        "required": true,
-        "description": "VeSync's account password"
-      },
       "accessories": {
         "type": "object",
         "properties": {
@@ -70,5 +64,6 @@
         }
       }
     }
+  }
   }
 }
