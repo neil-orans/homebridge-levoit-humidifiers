@@ -31,7 +31,7 @@ export type AccessoryThisType = ThisType<{
 
 export default class VeSyncAccessory {
     private humidifierService: Service;
-    private humiditySensorService: Service;
+    private humiditySensorService: Service | undefined;
     private lightService: Service | undefined;
     private sleepService: Service | undefined;
     private displayService: Service | undefined;
@@ -83,6 +83,7 @@ export default class VeSyncAccessory {
         const nightLightAccessory = (accessories.night_light != false);
         const sleepModeAccessory = (accessories.sleep_mode != false);
         const displayAccessory = (accessories.display != false);
+        const humiditySensor = (accessories.humidity_sensor != false);
 
         // Accessory info
         this.accessory
@@ -186,15 +187,17 @@ export default class VeSyncAccessory {
         }
 
         // Humidity Sensor service
-        this.humiditySensorService =
-            this.accessory.getService(HumiditySensorName) ||
-            this.accessory.addService(this.platform.Service.HumiditySensor, HumiditySensorName,HumiditySensorName);
+        if (humiditySensor) {
+            this.humiditySensorService =
+                this.accessory.getService(HumiditySensorName) ||
+                this.accessory.addService(this.platform.Service.HumiditySensor, HumiditySensorName,HumiditySensorName);
 
-        this.humidifierService.addLinkedService(this.humiditySensorService);
+            this.humidifierService.addLinkedService(this.humiditySensorService);
 
-        this.humiditySensorService
-            .getCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity)
-            .onGet(Humidity.get.bind(this));
+            this.humiditySensorService
+                .getCharacteristic(this.platform.Characteristic.CurrentRelativeHumidity)
+                .onGet(Humidity.get.bind(this));
+        }
 
         // Warm Mist service
         if (this.device.deviceType.hasWarmMode && warmMistAccessory) {
